@@ -13,6 +13,7 @@ const isDevelopment = process.env.NODE_ENV !== 'production'
 let mainWindow
 let imageWindow
 let settingsWindow
+let gmscWindow
 
 // Standard scheme must be registered before the app is ready
 protocol.registerStandardSchemes(['app'], { secure: true })
@@ -20,12 +21,14 @@ function createMainWindow () {
   const window = new BrowserWindow({ webPreferences: { webSecurity: false }})
   const image = new BrowserWindow({ width: 400, height: 400, parent: window, show: false})
   const settings = new BrowserWindow({ width: 400, height: 400, parent: window, show: false})
+  const gmsc = new BrowserWindow({ width: 400, height: 400, parent: window, show: false})
 
   if (isDevelopment) {
     // Load the url of the dev server if in development mode
     window.loadURL(process.env.WEBPACK_DEV_SERVER_URL)
     image.loadURL(process.env.WEBPACK_DEV_SERVER_URL + '/#/image')
     settings.loadURL(process.env.WEBPACK_DEV_SERVER_URL + '/#/settings')
+    gmsc.loadURL(process.env.WEBPACK_DEV_SERVER_URL + '/#/gmsc')
     if (!process.env.IS_TEST) window.webContents.openDevTools()
   } else {
     createProtocol('app')
@@ -40,6 +43,7 @@ function createMainWindow () {
 
     image.loadURL(`file://${__dirname}/index.html#image`)
     settings.loadURL(`file://${__dirname}/index.html#settings`)
+    gmsc.loadURL(`file://${__dirname}/index.html#gmsc`)
   }
 
   window.on('closed', () => {
@@ -55,6 +59,10 @@ function createMainWindow () {
     e.preventDefault()
     settings.hide()
   })
+  gmsc.on('close', (e) => {
+    e.preventDefault()
+    gmsc.hide()
+  })
 
   window.webContents.on('devtools-opened', () => {
     window.focus()
@@ -65,7 +73,7 @@ function createMainWindow () {
 
   imageWindow = image
   settingsWindow = settings
-
+  gmscWindow = gmsc
   return window
 }
 
@@ -100,4 +108,7 @@ ipcMain.on('toggle-image', (event, arg) => {
 
 ipcMain.on('toggle-settings', () => {
   settingsWindow.isVisible() ? settingsWindow.hide() : settingsWindow.show()
+})
+ipcMain.on('toggle-gmsc', () => {
+  gmscWindow.isVisible() ? gmscWindow.hide() : gmscWindow.show()
 })

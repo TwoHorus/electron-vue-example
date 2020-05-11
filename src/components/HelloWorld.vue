@@ -59,9 +59,21 @@ export default {
         {
           label: "Edit",
           submenu: [
-            { label: "Menu Item 1" },
-            { label: "Menu Item 2" },
-            { label: "Menu Item 3" }
+            { label: "Connections" },
+            { label: "Presets" },
+            { label: "Monitoring" }
+          ]
+        },
+        {
+          label: "gmsc",
+          submenu: [
+            {
+              label: "Open",
+              accelerator: "CmdOrCtrl+o",
+              click: () => {
+                ipcRenderer.send("toggle-gmsc");
+              }
+            }
           ]
         }
       ]);
